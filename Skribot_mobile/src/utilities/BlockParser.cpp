@@ -53,23 +53,21 @@
   }
 
    bool BlockHandler::CheckForTimeout(){
-            Serial.println("ceqiuhb");
+            Serial.println("Check for timeout");
             bool tmp = false;
             long last_message_time = millis();
             long last_ack_send = last_message_time;
-            
-            //delay(ack_resend_time);
-            Serial.println("ceqiuhb1");
-            Block::robot->BLE_write("ack\n");
-            Serial.println("ceqiuhb2");
-            Serial.println(Block::robot->BLE_dataAvailable() == 0);
+            bool ack_send = false;
             while((Block::robot->BLE_dataAvailable() == 0)){
-              Serial.println("time");
+              Serial.println(millis());
               if(millis() - last_message_time > MESSAGE_TIMEOUT){
                 tmp = true;
-                //if(ack_resend_time < MAX_ACK_RESENT_TIME)ack_resend_time += AFTER_TIMOUT_DELAY_INCREASE;
+                if(ack_resend_time < MAX_ACK_RESENT_TIME)ack_resend_time += AFTER_TIMOUT_DELAY_INCREASE;
                 break;
-                
+              }
+              if(!ack_send && (millis() - last_message_time > ack_resend_time)){
+                Block::robot->BLE_write("ack\n");
+                ack_send = true;
               }
             }
             return(tmp);
@@ -79,12 +77,10 @@
       char MainAsci,asciTmp;
       asciTmp = '0';
       if(Block::robot->BLE_dataAvailable()){
-        Serial.println("Data in buffer:");
-        Serial.println(Block::robot->BLE_dataAvailable());
         MainAsci = Block::robot->BLE_read();                                 //Reading first character of the message 255-error Code
         byte rubbish = 0;
-        if(MainAsci == 'O'){
-          while(rubbish < 6){
+        if(MainAsci == 'O' || MainAsci == 'S'){
+          while((rubbish < 6 || MainAsci == 'S') && (MainAsci == 'O' || rubbish < 18) ){
             if(Block::robot->BLE_dataAvailable()){
               Block::robot->BLE_read();
               rubbish++;
@@ -94,22 +90,22 @@
         }
         CheckLongCodes(&MainAsci);
         #ifdef DEBUG_MODE
-        Serial.print(MainAsci);
+        Serial.print("Got_Main:");
+        Serial.println(MainAsci);
         #endif
         if(MainAsci == INVALID_MSG_ERROR_CODE)return(INVALID_MSG_ERROR_CODE);
-        while(asciTmp != '\n' && MainAsci != 'H' && MainAsci != 'C' && MainAsci != 'G'){
-          Serial.println("wait");
-          Serial.println(Block::robot->BLE_dataAvailable());
+        while(asciTmp != '\n' && MainAsci != 'C' && MainAsci != 'G'){
           if(Block::robot->BLE_dataAvailable()){
             asciTmp = Block::robot->BLE_read();
             #ifdef DEBUG_MODE
-            Serial.print(asciTmp);
+            Serial.print("Got:");
+            Serial.println(asciTmp);
             #endif
           }else{
            if(CheckForTimeout())return(TIMEOUT_ERROR_CODE);
           }
         }
-        Serial.println("PPP");
+
         return(MainAsci);
       }else{
         return(NO_MSG_CODE);
@@ -237,7 +233,7 @@
             tmp = BLE_readwithTIMEOUT();
           break;
           case BATTERY:
-          Serial.println("Batery");
+          Serial.println("Battery");
           sprintf(tmp_tag,"%d",Block::robot->ReadBattery());
           Block::robot->BLE_write(tmp_tag);
           break;
@@ -305,6 +301,7 @@
               }
           break;
           case HARDWARE_SET:
+            #ifdef ESP_H
                 tmp = BLE_readwithTIMEOUT();
                 while(true){
                 tmp = BLE_readwithTIMEOUT();
@@ -332,7 +329,7 @@
               }else{
                 Serial.println("Now Hardware changes.");
               }
-              
+          #endif
 
               /*
                while(tmp != '\n' && n_hardware < 10){

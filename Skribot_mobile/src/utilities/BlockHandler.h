@@ -17,7 +17,7 @@
 #define NO_MSG_CODE '0'
 #define CODE_COMPLETE 2
 #define CODE_PASSED 1
-#define MAX_ACK_RESENT_TIME 300
+#define MAX_ACK_RESENT_TIME 500
 
 //Line Tags
 #define BAPTISED 'b'
@@ -93,7 +93,7 @@ public:
 	 #define LogicblockList_MAX 	50
 	 #define AritmeticblockList_MAX	50
 	 #define MAX_INTERRUPTS 8
-	 #define MAX_MSG_L 2500
+	 #define MAX_MSG_L 1500
 
 	Block *blockList[blockList_MAX];
 	Conditional *IfblockList[IfblockList_MAX];
