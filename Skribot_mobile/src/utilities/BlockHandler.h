@@ -11,9 +11,10 @@
 
 #define INVALID_MSG_ERROR_CODE 255
 #define TIMEOUT_ERROR_CODE 254
+#define CONN_BRK_CODE 253
 #define MESSAGE_TIMEOUT 2000
-#define ACK_RESEND_TIME 20
-#define AFTER_TIMOUT_DELAY_INCREASE 20
+#define ACK_RESEND_TIME 5
+#define AFTER_TIMOUT_DELAY_INCREASE 5
 #define NO_MSG_CODE '0'
 #define CODE_COMPLETE 2
 #define CODE_PASSED 1
@@ -83,8 +84,8 @@ public:
 	void clear();	
 	void init();
 	int portUID(byte portID);																					// BT message hendler												
-
-	bool runCode,transfereBlocks;
+	bool Check_CON_BREAK(char A);
+	bool runCode,transfereBlocks,O_got;
 	int ack_resend_time;
 
 	 #define blockList_MAX 			300
@@ -93,7 +94,7 @@ public:
 	 #define LogicblockList_MAX 	50
 	 #define AritmeticblockList_MAX	50
 	 #define MAX_INTERRUPTS 8
-	 #define MAX_MSG_L 1500
+	 #define MAX_MSG_L 500
 
 	Block *blockList[blockList_MAX];
 	Conditional *IfblockList[IfblockList_MAX];

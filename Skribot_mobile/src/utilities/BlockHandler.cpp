@@ -30,6 +30,7 @@
    millis_left_from_interrupt = 0;
    interrupted_step = 0;
    transfereBlocks = false;
+   O_got = false;
 	}
 
   void BlockHandler::clear(){
@@ -521,7 +522,7 @@ bool BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
             }
       }
       if(Block::robot->program_End_Reported || Block::robot->connection_Break_Reported)break;
-      if(checkForInterrupts()){
+     /* if(checkForInterrupts()){
        Serial.println("Interrupts!");
         millis_left_from_interrupt = (loop_iterator - yy)*interval;
         if(interrupt_info != NULL) *interrupt_info = false;
@@ -529,7 +530,7 @@ bool BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
         Serial.println(millis_left_from_interrupt);
         got_interrupt = true;
         break;
-      }
+      }*/
       if(Block::robot->stausLEDused)Block::robot->status->ReadBatteryState();
       delay(interval);
     } 

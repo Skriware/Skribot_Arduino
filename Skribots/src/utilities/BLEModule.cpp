@@ -46,15 +46,14 @@ switch(_type){
   }
   
 void BLEModule::BLE_write(char *msg){
-	Serial.print("Sending:");
-	Serial.println(msg);
+	//Serial.print("Sending:");
+	//Serial.println(msg);
 	#ifdef ESP_H
 	while(recivingData){
 		Serial.println("Waiting for data transfer to end.");
 		delay(100);
 	};
 	#endif
-	Serial.println("Sent");
 	#ifdef ESP_H
 		std::string _tmp = std::string(msg);
 	#endif
@@ -133,7 +132,7 @@ bool BLEModule::BLE_checkConnection(){
 		    Serial3.begin(9600);
 		    Serial3.setTimeout(50);
 		    pinMode(EDU_BT_STATE_PIN,INPUT);
-		    IfNamed = EEPROM.read(10);                         
+		    /*IfNamed = EEPROM.read(10);                         
 		    if(IfNamed != 1){
 		       char MAC[23] = {' '};
 		       delay(100);
@@ -160,7 +159,9 @@ bool BLEModule::BLE_checkConnection(){
 		      Serial.println("Robot named!");
 		      #endif
 		    }
+		    */
 		   #endif
+
      break;
     case ESP32_BLE:
     #ifdef ESP_H

@@ -170,6 +170,7 @@ void loop() {
         if(codeinfo == TIMEOUT_ERROR_CODE)break;
         if(codeinfo == CODE_COMPLETE)break;
         if(codeinfo == CODE_TOO_LONG)break;
+        if(codeinfo == CONN_BRK_CODE)break;
       }
       if(codeinfo == CODE_COMPLETE){
         Serial.println("BEGIN COMPILATION!");
@@ -182,20 +183,22 @@ void loop() {
             SendCodeEndMEssage();
 
         }else if(succes == CODE_NOT_VALID){
-          robot->BLE_write("ERROR:CODE_NOT_VALID\n");
-          //SendErrorMsg("CODE NOT VALID");
+          //robot->BLE_write("ERROR:CODE_NOT_VALID\n");
+          SendErrorMsg("CODE NOT VALID");
         }else if(succes == CODE_TOO_LONG){
-          robot->BLE_write("ERROR:STOP:CODE_TOO_LONG\n");
-          //SendErrorMsg("CODE TOO LONG");
+          //robot->BLE_write("ERROR:STOP:CODE_TOO_LONG\n");
+          SendErrorMsg("CODE TOO LONG");
         }
 
       }else if(codeinfo == TIMEOUT_ERROR_CODE){
-          //SendErrorMsg("TIMEOUT ERROR");
-          robot->BLE_write("ERROR:TIMEOUT_ERROR\n");
+          SendErrorMsg("TIMEOUT ERROR");
+          //robot->BLE_write("ERROR:TIMEOUT_ERROR\n");
       }else if(codeinfo == CODE_TOO_LONG){
-          robot->BLE_write("ERROR:STOP:CODE_TOO_LONG\n");
-          //SendErrorMsg("CODE TOO LONG");
-      } 
+          //robot->BLE_write("ERROR:STOP:CODE_TOO_LONG\n");
+          SendErrorMsg("CODE TOO LONG");
+      }else if(codeinfo == CONN_BRK_CODE){
+          SendErrorMsg("CONNECTION BREAK");
+      }
 
   }
   idle_connectioncheck();

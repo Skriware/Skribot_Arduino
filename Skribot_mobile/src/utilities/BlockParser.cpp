@@ -2,6 +2,18 @@
   #include "../Skribot_mobile.h"
 
 
+  bool BlockHandler::Check_CON_BREAK(char A){
+    if(O_got && A == 'K'){
+      O_got = false;
+      return(true);
+    }
+    if(A == 'O'){
+      O_got = true;
+    }else{
+      O_got = false;
+    }
+    return(false);
+  }
   int BlockHandler::portUID(byte portid){
         int primes[] = {2,3,5,7,11,13,17,19,23};
         return(primes[portid]);
@@ -53,19 +65,21 @@
   }
 
    bool BlockHandler::CheckForTimeout(){
-            Serial.println("Check for timeout");
+            sei();
             bool tmp = false;
             long last_message_time = millis();
             long last_ack_send = last_message_time;
             bool ack_send = false;
+            long time_passed = 1;
             while((Block::robot->BLE_dataAvailable() == 0)){
-              Serial.println(millis());
-              if(millis() - last_message_time > MESSAGE_TIMEOUT){
+              time_passed = (millis() - last_message_time)+1;
+                //Serial.println(time_passed);
+              if(time_passed > MESSAGE_TIMEOUT){
                 tmp = true;
-                if(ack_resend_time < MAX_ACK_RESENT_TIME)ack_resend_time += AFTER_TIMOUT_DELAY_INCREASE;
+                //if(ack_resend_time < MAX_ACK_RESENT_TIME)ack_resend_time += AFTER_TIMOUT_DELAY_INCREASE;
                 break;
               }
-              if(!ack_send && (millis() - last_message_time > ack_resend_time)){
+              if(!ack_send && (time_passed > ack_resend_time)){
                 Block::robot->BLE_write("ack\n");
                 ack_send = true;
               }
@@ -89,6 +103,7 @@
         return(NO_MSG_CODE);
         }
         CheckLongCodes(&MainAsci);
+        Check_CON_BREAK(MainAsci);
         #ifdef DEBUG_MODE
         Serial.print("Got_Main:");
         Serial.println(MainAsci);
@@ -98,9 +113,9 @@
           if(Block::robot->BLE_dataAvailable()){
             asciTmp = Block::robot->BLE_read();
             #ifdef DEBUG_MODE
-            Serial.print("Got:");
-            Serial.println(asciTmp);
+            Serial.print(asciTmp);
             #endif
+            if(Check_CON_BREAK(asciTmp))return(CONN_BRK_CODE);
           }else{
            if(CheckForTimeout())return(TIMEOUT_ERROR_CODE);
           }
@@ -116,12 +131,18 @@
     asciTmp = '0';
     if(Block::robot->BLE_dataAvailable()){
       MainAsci = Block::robot->BLE_read();                                 //Reading first character of the message 255-error Code
-      AddToMessage(MainAsci);  
+      if(MainAsci == 'O'){
+        Block::robot->BLE_Flush();
+        return(TIMEOUT_ERROR_CODE);
+      }
+      AddToMessage(MainAsci);
+      Check_CON_BREAK(MainAsci);  
       asciTmp = MainAsci;
     while(asciTmp != '\n'){
           if(Block::robot->BLE_dataAvailable()){
             asciTmp = Block::robot->BLE_read();
             AddToMessage(asciTmp); 
+             if(Check_CON_BREAK(asciTmp))return(CONN_BRK_CODE);
           }else{
             if(CheckForTimeout()){
               transfereBlocks = false;  
@@ -399,16 +420,25 @@
 
         if(LineCode == TIMEOUT_ERROR_CODE){
           Serial.println("Timeout Error");
-          Block::robot->BLE_write("ERROR:TIMEOUT_ERROR\n");
+        
+          //Block::robot->BLE_write("ERROR:TIMEOUT_ERROR\n");
           return;
+        }
+        if(LineCode == CONN_BRK_CODE){
+            Serial.println("CONN_BRK_CODE");
+            Block::robot->BLE_Flush();
+            return;
         }
         if(LineCode != NO_MSG_CODE && !transfereBlocks && LineCode != HARDWARE_SET){
         if(vaildcommand){
           sprintf(tmp_tag,"%cOK\n",LineCode);
           Block::robot->BLE_write(tmp_tag);
         }else{
-          sprintf(tmp_tag,"ERROR:STOP:UNKNOWN_COMMAND:%c\n",LineCode);
-          Block::robot->BLE_write(tmp_tag);
+          Serial.println("UNKNOWN_COMMAND");
+          Block::robot->BLE_Flush();
+            return;
+          //sprintf(tmp_tag,"ERROR:STOP:UNKNOWN_COMMAND:%c\n",LineCode);
+          //Block::robot->BLE_write(tmp_tag);
         }
       }
   } 
