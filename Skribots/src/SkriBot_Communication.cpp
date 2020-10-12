@@ -110,7 +110,10 @@ if(claw_closed && (millis() - claw_closed_time > 180000)){
             char tmp;
             while(BLE_dataAvailable() > 0){
               tmp = BLE_read();
-              delay(5);                     // to be sure that next char will be recieved
+              long zz = 0;
+              for(long yy = 0; yy< 10000; yy++){
+                zz++;
+              }                        // to be sure that next char will be recieved
               if((tmp == 'E' && BLE_read() == 'N' && BLE_read() == 'D') || (tmp == 'B' && BLE_read() == 'E' && BLE_read() == 'G')){
                 program_End_Reported = true;
               }

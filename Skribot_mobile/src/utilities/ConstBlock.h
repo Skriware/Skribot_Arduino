@@ -14,6 +14,8 @@ public:
   byte get_output_N();
   int32_t *t_output;
   byte N_output;
+  uint8_t *tmp_8;
+  uint16_t *tmp_16;
 
 };
 

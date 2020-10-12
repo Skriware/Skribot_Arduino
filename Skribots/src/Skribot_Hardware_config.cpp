@@ -256,9 +256,9 @@ void Skribot::Configure_Connections(String predef){
           #ifndef _VARIANT_BBC_MICROBIT_
           AddClaw(EDU_CLAW_PIN1,EDU_CLAW_PIN2);
           Claws[0]->SetPositions(BV_0_up,BV_0_down,BV_0_open,BV_0_close);
-          #if DISABLED(DEBUG_MODE)
+          #ifndef DEBUG_MODE
           AddLED(EDU_LED_DATA_PIN_1,1);
-          AddLED(EDU_LED_DATA_PIN,0);
+          AddLED(EDU_LED_DATA_PIN,2);
           #endif
           #endif
           AddLineSensor(EDU_LINE_SENSOR_1, 1);

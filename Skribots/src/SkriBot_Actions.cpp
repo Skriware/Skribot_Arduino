@@ -75,9 +75,9 @@ void Skribot::CloseClaw(byte id){
   void Skribot::TurnLEDOn(int R,int G, int B, int _id,byte N_LED){
     #ifndef _VARIANT_BBC_MICROBIT_
     for(int zz = 0; zz < NLEDs ; zz++){
-                    if(_id == -69 || LEDs[zz]->GetID() == _id){
+                    if(_id == 0 || LEDs[zz]->GetID() == _id){
                       LEDs[zz]->turnON(R,G,B,N_LED);
-                      if(_id != -69)break;
+                      if(_id != 0)break;
                     }                
       }
    
@@ -87,9 +87,9 @@ void Skribot::CloseClaw(byte id){
   void Skribot::TurnLEDOff(int _id, byte N_LED){
     #ifndef _VARIANT_BBC_MICROBIT_
     for(int zz = 0; zz < NLEDs ; zz++){
-                    if(_id == -69 || LEDs[zz]->GetID() == _id){
+                    if(_id == 0 || LEDs[zz]->GetID() == _id){
                       LEDs[zz]->turnOFF(N_LED);
-                      if(_id != -69)break;
+                      if(_id != 0)break;
                     }
       }
       delay(10);

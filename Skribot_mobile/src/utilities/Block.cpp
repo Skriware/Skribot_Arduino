@@ -15,12 +15,14 @@ Block::Block() {
   interrupted = false;
   action_with_no_interrupt = true;
   used_blocks_N = 0;
+  used_blocks = NULL;
+  used_blocksIDs = NULL;
 };
 
 Block::~Block() {
   //TO DO - check if it gives memory licks
-  //delete used_blocks;
-  //delete used_blocksIDs;
+ delete used_blocks;
+ delete used_blocksIDs;
 }
 
 Block::Block(Block* b) {
@@ -30,6 +32,7 @@ Block::Block(Block* b) {
   interrupted = false;
   action_with_no_interrupt = true;
   used_blocks_N = 0;
+  used_blocks = NULL;
 }
 
 Block::Block(byte id,byte _nextBlockID,int _actionID,byte *_usedblockIDs,byte Nused_blocks){
@@ -41,6 +44,7 @@ Block::Block(byte id,byte _nextBlockID,int _actionID,byte *_usedblockIDs,byte Nu
   next = NULL;
   interrupted = false;
   action_with_no_interrupt = true;
+  used_blocks = NULL;
 }
 
 byte Block::getActionID(){
@@ -179,7 +183,7 @@ size_t tmp_n;
            Block::BH->active_wait(10,10,interrupted,&action_with_no_interrupt);
         break;
     case 13:
-        Block::robot->TurnLEDOff();
+        Block::robot->TurnLEDOff(used_blocks[0]->get_output());
         break;
     case 14:
       {

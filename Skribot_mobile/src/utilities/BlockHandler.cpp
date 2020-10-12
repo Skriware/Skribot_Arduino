@@ -36,9 +36,11 @@
   void BlockHandler::clear(){
     runCode = false;
     for(int tt = 0; tt < blockList_MAX; tt++){
-      delete blockList[tt];
+      if(blockList[tt] != NULL)delete blockList[tt];
     }
-    for(byte yy = 0; yy <MAX_INTERRUPTS;yy++)delete Interrupts[yy];
+
+    for(byte yy = 0; yy <MAX_INTERRUPTS;yy++)if(Interrupts[yy] != NULL)delete Interrupts[yy];
+
    init();
   }
 	bool BlockHandler::addLoop(int id,	int startBlockID,	int endBlockID,		int count){
@@ -426,6 +428,7 @@ int BlockHandler::Handle_Msg(){
             }else if(input >1){
             memoryOk = addConst(id,tmp_32,input);
             }
+            delete tmp_32;
             break;
           }
           memoryOk = addConst(id,value);
@@ -515,14 +518,17 @@ bool BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
             char tmp;
             while(Block::robot->BLE_dataAvailable() > 0){
               tmp = Block::robot->BLE_read();
-              delay(5);                     // to be sure that next char will be recieved
+              long zz = 0;
+              for(long yy = 0; yy< 10000; yy++){
+                zz++;
+              }                     // to be sure that next char will be recieved
               if((tmp == 'E' && Block::robot->BLE_read() == 'N' && Block::robot->BLE_read() == 'D') || (tmp == 'B' && Block::robot->BLE_read() == 'E' && Block::robot->BLE_read() == 'G')){
                 Block::robot->program_End_Reported = true;
               }
             }
       }
       if(Block::robot->program_End_Reported || Block::robot->connection_Break_Reported)break;
-     /* if(checkForInterrupts()){
+      if(checkForInterrupts()){
        Serial.println("Interrupts!");
         millis_left_from_interrupt = (loop_iterator - yy)*interval;
         if(interrupt_info != NULL) *interrupt_info = false;
@@ -530,7 +536,7 @@ bool BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
         Serial.println(millis_left_from_interrupt);
         got_interrupt = true;
         break;
-      }*/
+      }
       if(Block::robot->stausLEDused)Block::robot->status->ReadBatteryState();
       delay(interval);
     } 

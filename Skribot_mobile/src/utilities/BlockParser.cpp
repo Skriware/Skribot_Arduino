@@ -50,7 +50,8 @@
           while(true){
             if(Block::robot->BLE_dataAvailable()){
               char tmp2 = Block::robot->BLE_read();
-              tmp2 = Block::robot->BLE_read();
+              while(Block::robot->BLE_dataAvailable() == 0);
+                tmp2 = Block::robot->BLE_read();
               if(tmp2 == 'S'){
                 *asciTmp = 'r';
                 break; 
@@ -67,19 +68,17 @@
    bool BlockHandler::CheckForTimeout(){
             sei();
             bool tmp = false;
-            long last_message_time = millis();
-            long last_ack_send = last_message_time;
             bool ack_send = false;
-            long time_passed = 1;
+            long time_passed = 0;
             while((Block::robot->BLE_dataAvailable() == 0)){
-              time_passed = (millis() - last_message_time)+1;
+              time_passed++;
                 //Serial.println(time_passed);
-              if(time_passed > MESSAGE_TIMEOUT){
+              if(time_passed > 160000){
                 tmp = true;
                 //if(ack_resend_time < MAX_ACK_RESENT_TIME)ack_resend_time += AFTER_TIMOUT_DELAY_INCREASE;
                 break;
               }
-              if(!ack_send && (time_passed > ack_resend_time)){
+              if(!ack_send && (time_passed > 10000)){
                 Block::robot->BLE_write("ack\n");
                 ack_send = true;
               }
@@ -183,6 +182,7 @@
                 #if ENABLED(DEBUG_MODE)
                   Serial.println("NewName");
                 #endif
+                while(Block::robot->BLE_dataAvailable() == 0);
                 tmp = Block::robot->BLE_read();
                 tmpNameArray[32] = {' '};
                 tmpCounter = 0;
@@ -198,12 +198,13 @@
                 #endif  
                 Block::robot->BLE_changeName(tmpNameArray);
                 clear();
+                
           break;
           case VERSION:
                 #if ENABLED(DEBUG_MODE)
                   Serial.println("Version Request");
                 #endif
-                sprintf(tmp_tag,"VERSION:2.0",FIRMWARE_VERSION);
+                sprintf(tmp_tag,"VERSION:2.1",FIRMWARE_VERSION);
                 Block::robot->BLE_write(tmp_tag);
                 clear();
           break;
@@ -255,7 +256,7 @@
           break;
           case BATTERY:
           Serial.println("Battery");
-          sprintf(tmp_tag,"%d",Block::robot->ReadBattery());
+          sprintf(tmp_tag,"%d",100);
           Block::robot->BLE_write(tmp_tag);
           break;
           case PIANO:

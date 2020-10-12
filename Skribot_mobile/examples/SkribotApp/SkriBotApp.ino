@@ -88,7 +88,7 @@ void SendCodeEndMEssage(){
         if(!Connection_Break){
           robot->ProgramENDRepotred();
           if(!robot->Remote_block_used){
-            robot->wait_And_Check_BLE_Connection(500,20);
+            //robot->wait_And_Check_BLE_Connection(500,20);
             robot->BLE_write("DONE\n");
           }else{
             robot->Remote_block_used = false;
@@ -101,10 +101,12 @@ void SendCodeEndMEssage(){
         ENTER_TO_IDLE();
 }
 void ExecuteCode(){
+  Serial.print("FREE RAM:");
+  Serial.println(freeRam());
         #if ENABLED(DEBUG_MODE)
           Serial.println("CONFIRMING START OF CODE");
         #endif
-        robot->status->ReadBatteryState();
+        //robot->status->ReadBatteryState();
 while(BH.doBlock()){
            if(robot->ProgramENDRepotred()){
               #if ENABLED(DEBUG_MODE)

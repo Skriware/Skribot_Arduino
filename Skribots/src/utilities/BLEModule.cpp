@@ -23,10 +23,15 @@ BLEModule::BLEModule(moduleType type){
 
 char BLEModule::BLE_read(){
 	  	char tmp;
+	  	long zz = 0;
 switch(_type){
 		case HM_10:
 		#ifndef ESP_H && _VARIANT_BBC_MICROBIT_
-			tmp = Serial3.read();
+			while(Serial3.available() == 0){
+				zz++;
+				if(zz == 40000)return(' ');
+			}
+				tmp = Serial3.read();
 			#endif
 		break;
 	case ESP32_BLE:
@@ -46,8 +51,9 @@ switch(_type){
   }
   
 void BLEModule::BLE_write(char *msg){
-	//Serial.print("Sending:");
-	//Serial.println(msg);
+	Serial.println();
+	Serial.print("Sending:");
+	Serial.println(msg);
 	#ifdef ESP_H
 	while(recivingData){
 		Serial.println("Waiting for data transfer to end.");
@@ -61,6 +67,7 @@ void BLEModule::BLE_write(char *msg){
 		case HM_10:
 			#ifndef ESP_H && _VARIANT_BBC_MICROBIT_
     		Serial3.print(msg);
+    		sei();
     		#endif
     		break;
     	case ESP32_BLE:
@@ -242,11 +249,6 @@ bool BLEModule::BLE_checkConnection(){
 			case HM_10:
 
 				 #ifndef ESP_H && _VARIANT_BBC_MICROBIT_
-				  while(BLE_checkConnection()){
-				    #ifdef DEBUG_MODE
-				    Serial.println("waiting...");
-				    #endif
-				  }
 				    #ifdef DEBUG_MODE
 				    Serial.println("disconnected!");
 				    #endif

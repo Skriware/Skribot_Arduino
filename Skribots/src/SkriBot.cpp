@@ -5,9 +5,9 @@
 
 
 Skribot::Skribot(String predef){
-  //#ifdef DEBUG_MODE
+  #ifdef DEBUG_MODE
   Serial.begin(115200);
-  //#endif
+  #endif
   NDistSensors    = 0;
   NLEDs           = 0;
   NLineSensors    = 0;

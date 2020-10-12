@@ -94,7 +94,7 @@ public:
 	 #define LogicblockList_MAX 	50
 	 #define AritmeticblockList_MAX	50
 	 #define MAX_INTERRUPTS 8
-	 #define MAX_MSG_L 500
+	 #define MAX_MSG_L 2500
 
 	Block *blockList[blockList_MAX];
 	Conditional *IfblockList[IfblockList_MAX];

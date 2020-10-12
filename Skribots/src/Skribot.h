@@ -1,7 +1,7 @@
 #ifndef SKRIBOT_H
 #define SKRIBOT_H
 
-#define DEBUG_MODE
+//#define DEBUG_MODE
 //#define DEBUG_MODE_1
 
 
@@ -262,8 +262,8 @@
     
     void TurnLEDOn(int R,int G, int B,String name,byte N_LED =1);
     void TurnLEDOff(String name,byte N_LED =1); 
-    void TurnLEDOn(int R,int G, int B,int _id = -69,byte N_LED = 1);
-    void TurnLEDOff(int _id = -69,byte N_LED = 1);
+    void TurnLEDOn(int R,int G, int B,int _id = 0, byte N_LED = 1);
+    void TurnLEDOff(int _id = 0,byte N_LED = 1);
     void SetLEDColor(int color_id);                                                            // LED functions
 
     int  LightSensor_Raw(int id);
