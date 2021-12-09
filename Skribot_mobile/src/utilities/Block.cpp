@@ -153,28 +153,35 @@ size_t tmp_n;
         Block::BH->active_wait(100,10,interrupted,&action_with_no_interrupt);
         break;
     case 12:
-         if(used_blocks[1]->get_output_N() == 1){
+        if(used_blocks[1]->get_output_N() == 1){
          switch(used_blocks[1]->get_output()){
-            case 0: 
+            case 0 : 
                 Block::robot->TurnLEDOn(255,0,0,used_blocks[0]->get_output());
             break;
-             case 1: 
+             case 1 : 
                   Block::robot->TurnLEDOn(0,0,255,used_blocks[0]->get_output());
             break;
-             case 2: 
+             case 2 : 
                 Block::robot->TurnLEDOn(0,255,0,used_blocks[0]->get_output());
             break;
-             case 4: 
+             case 4 : 
                 Block::robot->TurnLEDOn(255,0,255,used_blocks[0]->get_output());
             break;
-             case 5: 
+             case 5 : 
                   Block::robot->TurnLEDOn(255,255,255,used_blocks[0]->get_output());
             break;
-             case 3: 
+             case 3 : 
                 Block::robot->TurnLEDOn(184, 255, 3,used_blocks[0]->get_output());
             break;
             default:
             break;
+          }
+        }else if(used_blocks[1]->get_output_N() == 3){
+                tmp = used_blocks[1]->get_table_output_8();
+                Block::robot->TurnLEDOn(tmp[0],tmp[1],tmp[2],used_blocks[0]->get_output());
+        }
+           Block::BH->active_wait(10,10,interrupted,&action_with_no_interrupt);
+
           }
         }else if(used_blocks[1]->get_output_N() == 3){
                 tmp = used_blocks[1]->get_table_output_8();
