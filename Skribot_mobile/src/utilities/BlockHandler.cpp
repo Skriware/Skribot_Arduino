@@ -410,7 +410,7 @@ int BlockHandler::Handle_Msg(){
           endBlockID = readInt();
           memoryOk = addLoop(id,startBlockID,endBlockID,countID);
           break;
-     case 'C':
+    case 'C':
           Mcursor += 2;
           if(AllMessage[Mcursor] == 'I'){
             value = -1;
@@ -428,7 +428,6 @@ int BlockHandler::Handle_Msg(){
             }else if(input >1){
             memoryOk = addConst(id,tmp_32,input);
             }
-            delete tmp_32;
             break;
           }
           memoryOk = addConst(id,value);
