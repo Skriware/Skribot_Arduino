@@ -3,7 +3,17 @@
 #include "Claw.h"
 
 Claw::Claw(int Claw_Pin,int Arm_Pin,byte _id){
-	
+	#ifdef ESP_H
+	up_v = BV_1_up;
+	down_v = BV_1_down;
+	close_v = BV_1_close;
+	open_v = BV_1_open;
+	#else
+	up_v = BV_0_up;
+	down_v = BV_0_down;
+	close_v = BV_0_close;
+	open_v = BV_0_open;
+	#endif
 	#ifdef ESP_H
 	SetNewPWMChannel(Claw_Pin);
 	SetNewPWMChannel(Arm_Pin);
@@ -16,10 +26,9 @@ Claw::Claw(int Claw_Pin,int Arm_Pin,byte _id){
 	arm_servo->attach(Arm_Pin);
 	#endif
 	id = _id;
-	up_v = BV_1_up;
-	down_v = BV_1_down;
-	close_v = BV_1_close;
-	open_v = BV_1_open;
+	Open();
+	Put_Down();
+
 }
 
 
