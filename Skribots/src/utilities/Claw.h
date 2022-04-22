@@ -8,8 +8,8 @@
 
 #define BV_0_up	50
 #define BV_0_down 10
-#define BV_0_close 5
-#define BV_0_open 45
+#define BV_0_close 120
+#define BV_0_open 170
 
 #define BV_1_up	120
 #define BV_1_down 70
